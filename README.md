@@ -52,7 +52,9 @@ LZHAM also supports a usable subset of the zlib API with extensions, either incl
 
 <h3>Usage Tips</h3>
 
-* Always try to use the smallest dictionary size that makes sense for the file or block you are compressing, i.e. don't use 128MB dictionary for a 15KB file.
+* Always try to use the smallest dictionary size that makes sense for the file or block you are compressing, i.e. don't use 128MB dictionary for a 15KB file. The codec
+doesn't automatically choose for you because in streaming scenarios it has no idea how large the file or block will be.
+* The larger the dictionary, the more RAM is required during compression and decompression. I would avoid using more than 8-16MB dictionaries on iOS.
 * For faster decompression, prefer "unbuffered" decompression mode vs. buffered decompression (avoids a dictionary alloc and extra memcpy()'s), and disable adler-32 checking. Also, use the built-in LZHAM API's, not the
 zlib-style API's for fastest decompression.
 * Experiment with the "m_table_update_rate" compression/decompression parameter. This setting trades off a small amount of ratio for faster decompression.
