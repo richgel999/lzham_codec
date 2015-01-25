@@ -17,7 +17,7 @@ LZHAM's decompressor is slower than zlib's, but generally much faster than LZMA'
 <p>LZHAM's compressor is intended for offline use, but it is tested alongside the decompressor on mobile devices and is usable on the faster settings.</p>
 
 <p>LZHAM's decompressor currently has a higher cost to initialize than LZMA, so the threshold where LZHAM is typically faster vs. LZMA decompression is between 1000-13,000 of 
-*compressed* output bytes, depending on the platform. It is not a good small block compressor: it likes large (15KB, preferably 50KB) blocks.</p>
+*compressed* output bytes, depending on the platform. It is not a good small block compressor: it likes large (10KB-15KB minimum) blocks.</p>
 
 <p>LZHAM has simple support for patch files (delta compression), but this is a side benefit of its design, not its primary use case. Internally it supports LZ matches up 
 to ~64KB and very large dictionaries (up to .5 GB).</p>
