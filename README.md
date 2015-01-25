@@ -1,6 +1,6 @@
-<p>LZHAM Lossless Data Compression Codec - v1.0 - Jan. 24, 2015</p>
-<p>Copyright (c) 2009-2015 Richard Geldreich, Jr. <richgel99@gmail.com></p>
-<p>MIT License - http://code.google.com/p/lzham/</p>
+<h3>LZHAM Lossless Data Compression Codec - v1.0 - Jan. 24, 2015</h3>
+<h3>Copyright (c) 2009-2015 Richard Geldreich, Jr. <richgel99@gmail.com></h3>
+<h3>MIT License - http://code.google.com/p/lzham/</h3>
 
 <p>Summary: C/C++ lossless data compression codec with a compression ratio similar to LZMA but 1.5x-8x faster decompression speed</p>
 
@@ -20,7 +20,7 @@ to ~64KB and very large dictionaries (up to .5 GB).</p>
 <p>LZHAM may be valuable to you if you compress data offline and distribute it to many customers, care about read/download times, and decompression speed/low CPU+power use 
 are important to you.</p>
 
-<h1>Platforms/Compiler Support</h1>
+<h3>Platforms/Compiler Support</h3>
 
 LZHAM currently officially supports x86/x64 Linux, iOS, OSX, and Windows x86/x64. Android support is coming next.
 It should be easy to retarget by modifying the macros in lzham_core.h. Early alphas were tested on Xbox 360 (PPC, big endian).
@@ -28,7 +28,7 @@ LZHAM has optional support for multithreaded compression. It supports gcc built-
 specific pthreads, generic phthreads, or Windows API's.
 For compilers, I've tested with gcc, clang, and MSVC 2008 and 2010.
 
-<h1>API</h1>
+<h3>API</h3>
 
 LZHAM supports streaming or memory to memory compression/decompression. See include/lzham.h. LZHAM can be linked statically or dynamically, just study the 
 headers and the lzhamtest project. 
@@ -36,7 +36,7 @@ On Linux/OSX, it's only been tested with static linking so far.
 
 LZHAM also supports a usable subset of the zlib API with extensions, either include/zlib.h or #define LZHAM_DEFINE_ZLIB_API and use include/lzham.h.
 
-<h1>Codec Test App</h1>
+<h3>Codec Test App</h3>
 
 lzhamtest_x86/x64 is a simple command line test program that uses the LZHAM codec to compress/decompress single files. 
 lzhamtest is not intended as a file archiver or end user tool, it's just a simple testbed.
@@ -75,7 +75,7 @@ The x86 version defaults to 64MB (26), and the x64 version defaults to 256MB (28
 
 See lzhamtest_x86/x64.exe's help text for more command line parameters.
 
-<h1>Compiling LZHAM</h1>
+<h3>Compiling LZHAM</h3>
 
 - Linux: Use "cmake ." then "make". The cmake script only supports Linux at the moment. (Sorry, working on build systems is a drag.)
 - OSX/iOS: Use the included XCode project. (NOTE: I haven't merged this over yet. It's coming!)
@@ -89,13 +89,13 @@ http://stackoverflow.com/questions/2958633/gcc-strict-aliasing-and-horror-storie
 
 It might work fine, I don't know yet. This is usually not a problem with MSVC, which defaults to strict aliasing being off.
 
-<h1>ANSI C/C++</h1>
+<h3>ANSI C/C++</h3>
 
 LZHAM supports compiling as plain vanilla ANSI C/C++. To see how the codec configures itself check out lzham_core.h and search for "LZHAM_ANSI_CPLUSPLUS". 
 All platform specific stuff (unaligned loads, threading, atomic ops, etc.) should be disabled when this macro is defined. Note, the compressor doesn't use threads 
 or atomic operations when built this way so it's going to be pretty slow. (The compressor was built from the ground up to be threaded.)
 
-<h1>Known Problems</h1>
+<h3>Known Problems</h3>
 
 <p>LZHAM's decompressor is like a drag racer that needs time to get up to speed. LZHAM is not intended or optimized to be used on "small" blocks of data (less 
 than ~10,000 bytes of *compressed* data on desktops, or around 1,000-5,000 on iOS). If your usage case involves calling the codec over and over with tiny blocks 
