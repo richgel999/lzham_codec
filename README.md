@@ -25,6 +25,8 @@ to ~64KB and very large dictionaries (up to .5 GB).</p>
 <p>LZHAM may be valuable to you if you compress data offline and distribute it to many customers, care about read/download times, and decompression speed/low CPU+power use 
 are important to you.</p>
 
+<p>I've been profiling LZHAM vs. LZMA and publishing the results on my blog: http://richg42.blogspot.com</p>
+
 <h3>Compressed Bitstream Compatibility</h3>
 
 <p>v1.0's bitstream format is now locked in place, so any future v1.x releases will be backwards/forward compatible with compressed files 
@@ -67,6 +69,9 @@ near-optimal parsing with different heuristic settings.
 initializing/deinitializing the entire codec every time.
 * LZHAM's compressor is no speed demon. It's usually slower than LZMA's, sometimes by a wide (~2x slower or so) margin. In "extreme" parsing mode, it can be many times slower. 
 This codec was designed with offline compression in mind.
+* One significant difference between LZMA and LZHAM is how uncompressible files are handled. LZMA usually expands uncompressible files, and its decompressor can bog down and run extremely 
+slowly on uncompressible data. LZHAM internally detects when each 512KB block is uncompressible and stores these blocks as uncompressed bytes instead. 
+LZHAM's literal decoding is significantly faster than LZMA's, so the more plain literals in the output stream, the faster LZHAM's decompressor runs vs. LZMA's.
 
 <h3>Codec Test App</h3>
 
