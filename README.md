@@ -28,7 +28,7 @@ are important to you.</p>
 <h3>Compressed Bitstream Compatibility</h3>
 
 <p>v1.0's bitstream format is now locked in place, so any future v1.x releases will be backwards/forward compatible with compressed files 
-written with v1.0.</p>
+written with v1.0. The only thing that could change this are critical bugfixes.</p>
 
 <p>Note LZHAM v1.x bitstreams are NOT backwards compatible with any of the previous alpha versions on Google Code.</p>
 
