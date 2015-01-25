@@ -104,7 +104,7 @@ or atomic operations when built this way so it's going to be pretty slow. (The c
 
 <p>LZHAM's decompressor is like a drag racer that needs time to get up to speed. LZHAM is not intended or optimized to be used on "small" blocks of data (less 
 than ~10,000 bytes of *compressed* data on desktops, or around 1,000-5,000 on iOS). If your usage case involves calling the codec over and over with tiny blocks 
-than use LZMA, LZ4, Deflate, etc.</p>
+then LZMA, LZ4, Deflate, etc. are probably better choices.</p>
 
 <p>The decompressor still takes too long to init vs. LZMA. On iOS the cost is not that bad, but on desktop the cost is high. I have reduced the startup cost vs. the 
 alpha but there's still work to do.</p>
