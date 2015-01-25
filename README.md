@@ -2,8 +2,10 @@ LZHAM
 =============
 
 Lossless Data Compression Codec - v1.0
-Copyright (c) 2009-2015 Richard Geldreich, Jr. <richgel99@gmail.com>
+
 MIT License
+
+Copyright (c) 2009-2015 Richard Geldreich, Jr. <richgel99@gmail.com>
 
 <p>Summary: C/C++ lossless data compression codec with a compression ratio similar to LZMA but 1.5x-8x faster decompression speed</p>
 
