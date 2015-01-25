@@ -1,5 +1,6 @@
-<h5>LZHAM Lossless Data Compression Codec - v1.0 - Jan. 24, 2015</h5>
-<h5>Copyright (c) 2009-2015 Richard Geldreich, Jr. <richgel99@gmail.com></h5>
+```
+LZHAM Lossless Data Compression Codec - v1.0 - Jan. 24, 2015<
+Copyright (c) 2009-2015 Richard Geldreich, Jr. <richgel99@gmail.com>
 MIT License - http://code.google.com/p/lzham/
 
 Summary: Lossless data compression codec with a compression ratio similar to LZMA but 1.5x-8x faster decompression speed
@@ -101,3 +102,4 @@ The decompressor still takes too long to init vs. LZMA. On iOS the cost is not t
 alpha but there's still work to do.
 The compressor is slower than I would like, and doesn't scale as well as it could. I added a reinit() method to make it initialize faster, but it's not a speed demon. 
 My focus has been on ratio and decompression speed.
+'''
