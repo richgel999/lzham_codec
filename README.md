@@ -1,22 +1,24 @@
-```
-LZHAM Lossless Data Compression Codec - v1.0 - Jan. 24, 2015<
-Copyright (c) 2009-2015 Richard Geldreich, Jr. <richgel99@gmail.com>
-MIT License - http://code.google.com/p/lzham/
+<p>LZHAM Lossless Data Compression Codec - v1.0 - Jan. 24, 2015</p>
+<p>Copyright (c) 2009-2015 Richard Geldreich, Jr. <richgel99@gmail.com></p>
+<p>MIT License - http://code.google.com/p/lzham/</p>
 
-Summary: Lossless data compression codec with a compression ratio similar to LZMA but 1.5x-8x faster decompression speed
+<p>Summary: C/C++ lossless data compression codec with a compression ratio similar to LZMA but 1.5x-8x faster decompression speed</p>
 
 --- Introduction ---
 
-LZHAM is a lossless (LZ based) data compression codec optimized for particularly fast decompression at very high compression ratios with a zlib compatible API. 
-It's been developed over a period of 3 years and alpha versions have already shipped in many products.
-LZHAM's decompressor is slower than zlib's, but much faster than LZMA's, with a compression ratio that is typically within a few percent of LZMA's and sometimes better.
-LZHAM's compressor is intended for offline use, but it is tested alongside the decompressor on mobile devices and is usable on the faster settings.
-LZHAM's decompressor currently has a higher cost to initialize than LZMA, so the threshold where LZHAM is typically faster vs. LZMA decompression is between 1000-13,000 of 
+<p>LZHAM is a lossless (LZ based) data compression codec optimized for particularly fast decompression at very high compression ratios with a zlib compatible API. 
+It's been developed over a period of 3 years and alpha versions have already shipped in many products. (The alpha is here: https://code.google.com/p/lzham/)
+LZHAM's decompressor is slower than zlib's, but generally much faster than LZMA's, with a compression ratio that is typically within a few percent of LZMA's and sometimes better.</p>
+
+<p>LZHAM's compressor is intended for offline use, but it is tested alongside the decompressor on mobile devices and is usable on the faster settings.</p>
+
+<p>LZHAM's decompressor currently has a higher cost to initialize than LZMA, so the threshold where LZHAM is typically faster vs. LZMA decompression is between 1000-13,000 of 
 *compressed* output bytes, depending on the platform. It is not a good small block compressor: it likes large (15KB, preferably 50KB) blocks.
 LZHAM has simple support for patch files (delta compression), but this is a side benefit of its design, not its primary use case. Internally it supports LZ matches up 
-to ~64KB and very large dictionaries (up to .5 GB).
-LZHAM may be valuable to you if you compress data offline and distribute it to many customers, care about read/download times, and decompression speed/low CPU+power use 
-are important to you. 
+to ~64KB and very large dictionaries (up to .5 GB).</p>
+
+<p>LZHAM may be valuable to you if you compress data offline and distribute it to many customers, care about read/download times, and decompression speed/low CPU+power use 
+are important to you.</p>
 
 --- Platforms/Compiler Support ---
 
@@ -102,4 +104,3 @@ The decompressor still takes too long to init vs. LZMA. On iOS the cost is not t
 alpha but there's still work to do.
 The compressor is slower than I would like, and doesn't scale as well as it could. I added a reinit() method to make it initialize faster, but it's not a speed demon. 
 My focus has been on ratio and decompression speed.
-'''
