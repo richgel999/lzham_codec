@@ -64,6 +64,7 @@ Note the m_table_update_rate decompression parameter MUST match the setting used
 * Avoid using LZHAM on small *compressed* blocks, where small is 1KB-10KB compressed bytes depending on the platform. LZHAM's decompressor is only faster than LZMA's beyond the small block threshold.
 Optimizing LZHAM's decompressor to reduce its startup time relative to LZMA is a high priority.
 * For best compression (I've seen up to ~4% better), enable the compressor's "extreme" parser, which is much slower but finds cheaper paths through a much denser parse graph.
+Note the extreme parser can greatly slow down on files containing large amounts of repeated data/strings, but it is guaranteed to finish.
 * The compressor's m_level parameter can make a big impact on compression speed. Level 0 (LZHAM_COMP_LEVEL_FASTEST) uses a much simpler greedy parser, and the other levels use 
 near-optimal parsing with different heuristic settings.
 * Check out the compressor/decompressor reinit() API's, which are useful if you'll be compressing or decompressing many times. Using the reinit() API's is a lot cheaper than fully 
