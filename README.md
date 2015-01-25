@@ -116,8 +116,8 @@ See lzhamtest_x86/x64.exe's help text for more command line parameters.
 IMPORTANT: With clang or gcc compile LZHAM with "No strict aliasing" ENABLED: -fno-strict-aliasing
 
 I DO NOT test or develop the codec with strict aliasing:
-https://lkml.org/lkml/2003/2/26/158
-http://stackoverflow.com/questions/2958633/gcc-strict-aliasing-and-horror-stories
+* https://lkml.org/lkml/2003/2/26/158
+* http://stackoverflow.com/questions/2958633/gcc-strict-aliasing-and-horror-stories
 
 It might work fine, I don't know yet. This is usually not a problem with MSVC, which defaults to strict aliasing being off.
 
