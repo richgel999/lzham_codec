@@ -50,6 +50,19 @@ On Linux/OSX, it's only been tested with static linking so far.
 
 LZHAM also supports a usable subset of the zlib API with extensions, either include/zlib.h or #define LZHAM_DEFINE_ZLIB_API and use include/lzham.h.
 
+<h3>Usage Tips</h3>
+
+* Always try to use the smallest dictionary size that makes sense for the file or block you are compressing, i.e. don't use 128MB dictionary for a 15KB file.
+* For faster decompression, prefer "unbuffered" decompression mode vs. buffered decompression, and disable adler-32 checking. Also, use the built-in LZHAM API's, not the
+zlib-style API's for fastest decompression.
+* Experiment with the "m_table_update_rate" compression/decompression parameter. This setting trades off a small amount of ratio for faster decompression.
+* Avoid using LZHAM on small compressed blocks, where small is 1KB-10KB depending on the platform. LZHAM's decompressor is only faster than LZMA's beyond the small block threshold.
+* For best compression (I've seen up to 3-4% better), enable the compressor's "extreme" parser, which is much slower but finds cheaper paths through a much denser parse graph.
+* The compressor's m_level parameter can make a big impact on compression speed. Level 0 (LZHAM_COMP_LEVEL_FASTEST) uses a much simpler greedy parser, and the other levels use 
+near-optimal parsing with different heuristic settings.
+* Check out the compressor/decompressor reinit() API's, which are useful if you'll be compressing or decompressing many times. Using the reinit() API's is a lot cheaper than fully 
+initializing/deinitializing the entire codec every time.
+
 <h3>Codec Test App</h3>
 
 lzhamtest_x86/x64 is a simple command line test program that uses the LZHAM codec to compress/decompress single files. 
