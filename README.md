@@ -4,7 +4,7 @@
 
 <p>Summary: C/C++ lossless data compression codec with a compression ratio similar to LZMA but 1.5x-8x faster decompression speed</p>
 
-<h1>Introduction</h1>
+<h3>Introduction</h3>
 
 <p>LZHAM is a lossless (LZ based) data compression codec optimized for particularly fast decompression at very high compression ratios with a zlib compatible API. 
 It's been developed over a period of 3 years and alpha versions have already shipped in many products. (The alpha is here: https://code.google.com/p/lzham/)
