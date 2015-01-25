@@ -1,4 +1,4 @@
-LZHAM Lossless Data Compression Codec - v1.0 - Jan. 24, 2015
+<p>LZHAM Lossless Data Compression Codec - v1.0 - Jan. 24, 2015</p>
 Copyright (c) 2009-2015 Richard Geldreich, Jr. <richgel99@gmail.com>
 MIT License - http://code.google.com/p/lzham/
 
