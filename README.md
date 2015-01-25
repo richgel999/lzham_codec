@@ -28,7 +28,7 @@ are important to you.</p>
 LZHAM currently officially supports x86/x64 Linux, iOS, OSX, and Windows x86/x64. Android support is coming next.
 It should be easy to retarget by modifying the macros in lzham_core.h. Early alphas were tested on Xbox 360 (PPC, big endian).</p>
 
-<p>LZHAM has optional support for multithreaded compression. It supports gcc built-ins or Windows API's for atomic ops. For threading, it supports OSX 
+<p>LZHAM has optional support for multithreaded compression. It supports gcc built-ins or MSVC intrinsics for atomic ops. For threading, it supports OSX 
 specific pthreads, generic phthreads, or Windows API's.</p>
 
 <p>For compilers, I've tested with gcc, clang, and MSVC 2008 and 2010.</p>
