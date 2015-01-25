@@ -53,9 +53,10 @@ LZHAM also supports a usable subset of the zlib API with extensions, either incl
 <h3>Usage Tips</h3>
 
 * Always try to use the smallest dictionary size that makes sense for the file or block you are compressing, i.e. don't use 128MB dictionary for a 15KB file.
-* For faster decompression, prefer "unbuffered" decompression mode vs. buffered decompression, and disable adler-32 checking. Also, use the built-in LZHAM API's, not the
+* For faster decompression, prefer "unbuffered" decompression mode vs. buffered decompression (avoids a dictionary alloc and extra memcpy()'s), and disable adler-32 checking. Also, use the built-in LZHAM API's, not the
 zlib-style API's for fastest decompression.
 * Experiment with the "m_table_update_rate" compression/decompression parameter. This setting trades off a small amount of ratio for faster decompression.
+Note the m_table_update_rate decompression parameter MUST match the setting used during compression (same for the dictionary size). It's up to you to store this info somehow.
 * Avoid using LZHAM on small compressed blocks, where small is 1KB-10KB depending on the platform. LZHAM's decompressor is only faster than LZMA's beyond the small block threshold.
 * For best compression (I've seen up to 3-4% better), enable the compressor's "extreme" parser, which is much slower but finds cheaper paths through a much denser parse graph.
 * The compressor's m_level parameter can make a big impact on compression speed. Level 0 (LZHAM_COMP_LEVEL_FASTEST) uses a much simpler greedy parser, and the other levels use 
