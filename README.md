@@ -65,6 +65,8 @@ Note the m_table_update_rate decompression parameter MUST match the setting used
 near-optimal parsing with different heuristic settings.
 * Check out the compressor/decompressor reinit() API's, which are useful if you'll be compressing or decompressing many times. Using the reinit() API's is a lot cheaper than fully 
 initializing/deinitializing the entire codec every time.
+* LZHAM's compressor is no speed demon. It's usually slower than LZMA's, sometimes by a wide (~2x slower or so) margin. In "extreme" parsing mode, it can be many times slower. 
+This codec was designed with offline compression in mind.
 
 <h3>Codec Test App</h3>
 
