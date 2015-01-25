@@ -74,6 +74,9 @@ This codec was designed with offline compression in mind.
 * One significant difference between LZMA and LZHAM is how uncompressible files are handled. LZMA usually expands uncompressible files, and its decompressor can bog down and run extremely 
 slowly on uncompressible data. LZHAM internally detects when each 512KB block is uncompressible and stores these blocks as uncompressed bytes instead. 
 LZHAM's literal decoding is significantly faster than LZMA's, so the more plain literals in the output stream, the faster LZHAM's decompressor runs vs. LZMA's.
+* General advice: If you are compressing large amounts of serialized game assets, sort the serialized data by asset type and compress the whole thing as a single large "solid" block of data.
+Don't compress each individual asset, this will kill your ratio and have a higher decompression startup cost. If you need random access, considering compressing the assets lumped 
+together into a groups of a few hundred kilobytes each.
 
 <h3>Codec Test App</h3>
 
