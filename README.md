@@ -148,3 +148,9 @@ alpha but there's still work to do.</p>
 
 <p>The compressor is slower than I would like, and doesn't scale as well as it could. I added a reinit() method to make it initialize faster, but it's not a speed demon. 
 My focus has been on ratio and decompression speed.</p>
+
+<h3>Special Thanks</h3>
+
+<p>Thanks to everyone at the http://encode.ru forums. I read these forums as a lurker before working on LZHAM, and I studied every LZ related 
+post I could get my hands on. Especially anything related to LZ optimal parsing, which still seems like a black art. LZHAM was my way of 
+learning how to implement optimal parsing (and you can see this if you study the progress I made in the early alphas on Google Code).</p>
