@@ -61,5 +61,4 @@ include_directories(
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin_linux)
 
 add_library(${PROJECT_NAME} ${SRC_LIST})
-target_link_libraries(${PROJECT_NAME} lzhamcomp)
 
