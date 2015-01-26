@@ -96,6 +96,10 @@ namespace lzham
          {
             l++;
          }
+         else
+         {
+            l = 0;
+         }
 #else
          while (v > 0U)
          {
