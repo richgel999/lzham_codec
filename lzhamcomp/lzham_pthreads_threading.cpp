@@ -27,7 +27,7 @@
 #include <process.h>
 #endif
 
-#if defined(__GNUC__) && !defined(__APPLE__)
+#if defined(__GNUC__) && !defined(__APPLE__) && !defined(__MINGW32__)
 #include <sys/sysinfo.h>
 #endif
 

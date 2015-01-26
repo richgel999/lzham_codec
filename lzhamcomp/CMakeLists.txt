@@ -35,6 +35,7 @@ set(SRC_LIST
 	lzham_null_threading.h
 	lzham_pthreads_threading.cpp
 	lzham_pthreads_threading.h
+	lzham_win32_threading.cpp
 	lzham_threading.h)
 
 # -fno-strict-aliasing is *required* to compile LZHAM
@@ -61,4 +62,5 @@ include_directories(
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin_linux)
 
 add_library(${PROJECT_NAME} ${SRC_LIST})
+target_link_libraries(${PROJECT_NAME} lzhamdecomp)
 install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib${LIB_SUFFIX} ARCHIVE DESTINATION lib${LIB_SUFFIX} RUNTIME DESTINATION bin)
