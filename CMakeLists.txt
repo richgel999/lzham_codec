@@ -6,3 +6,10 @@ add_subdirectory(lzhamdecomp)
 add_subdirectory(lzhamcomp)
 add_subdirectory(lzhamdll)
 add_subdirectory(lzhamtest)
+
+install(FILES include/lzham_dynamic_lib.h
+              include/lzham_exports.inc
+              include/lzham.h
+              include/lzham_static_lib.h
+              include/zlib.h
+              DESTINATION include)
