@@ -27,6 +27,8 @@ are important to you.</p>
 
 <p>I've been profiling LZHAM vs. LZMA and publishing the results on my blog: http://richg42.blogspot.com</p>
 
+<p>Some independent benchmarks of the previous alpha versions: http://heartofcomp.altervista.org/MOC/MOCADE.htm, http://mattmahoney.net/dc/text.html</p>
+
 <h3>Compressed Bitstream Compatibility</h3>
 
 <p>v1.0's bitstream format is now locked in place, so any future v1.x releases will be backwards/forward compatible with compressed files 
