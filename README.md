@@ -154,3 +154,5 @@ My focus has been on ratio and decompression speed.</p>
 <p>Thanks to everyone at the http://encode.ru forums. I read these forums as a lurker before working on LZHAM, and I studied every LZ related 
 post I could get my hands on. Especially anything related to LZ optimal parsing, which still seems like a black art. LZHAM was my way of 
 learning how to implement optimal parsing (and you can see this if you study the progress I made in the early alphas on Google Code).</p>
+
+<p>Also, thanks to Igor Pavlov, the original creator of LZMA and 7zip, for advancing the start of the art in LZ compression.</p>
