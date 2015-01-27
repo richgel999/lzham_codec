@@ -79,6 +79,8 @@ LZHAM's literal decoding is significantly faster than LZMA's, so the more plain 
 * General advice (applies to LZMA and other codecs too): If you are compressing large amounts of serialized game assets, sort the serialized data by asset type and compress the whole thing as a single large "solid" block of data.
 Don't compress each individual asset, this will kill your ratio and have a higher decompression startup cost. If you need random access, consider compressing the assets lumped 
 together into groups of a few hundred kilobytes (or whatever) each.
+* LZHAM is a raw codec. It doesn't include any sort of preprocessing: EXE rel to abs jump transformation, audio predictors, etc. That's up to you
+to do, before compression.
 
 <h3>Codec Test App</h3>
 
