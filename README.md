@@ -184,3 +184,7 @@ I tried a number of coding techniques which just were not competitive against LZ
 Eventually, I refactored the codec and released the first alpha on Google Code in 2009, then continued on with the alphas for 7-8 more alpha releases. I optimized the parser by moving away from plain Dijkstra, added an "extreme" parsing mode 
 which can exploit locally suboptimal LZ decisions if they result in a better overall ratio, added a zlib-like API, and wrote examples. v1.0 was released in Jan. 2013 after spending another few weeks further profiling 
 and optimizing the codec to run well on mobile CPU's.
+
+I have a ROLZ variant of LZHAM, which achieves significantly better ratios but decompresses at roughly half the speed (and requires a lot more memory). Unfortunately, the resulting codec is extremely complex and I'm not convinced it's the right answer. 
+
+I also have also integrated LZHAM directly into 7zip GUI and command line, mostly to verify and test LZHAM's streaming interface. If anyone is interested I can finish up the 7zip LZHAM changes and release them somehow.
