@@ -173,7 +173,7 @@ Empires 1/2, Halo Wars, Forza 2, Halo 3, and probably other stuff. I probably ha
 Eventually, Microsoft laid us off, and they switched future titles to their higher ratio LZX codec. After leaving Microsoft I spent a year researching fast Huffman and 
 arithmetic decoding techniques for a new codec that could beat LZX. 
 
-I eventually wrote LZHAM at home during the night after starting at Valve, in bits and pieces as time permitted. I knew I couldn't afford to do much arithmetic decoding, because I was targeting the
+I eventually wrote LZHAM at home after starting at Valve, in bits and pieces as time permitted. I knew I couldn't afford to do much arithmetic decoding, because I was targeting the
 codec for Xbox 360 CPU which had a slow non-pipelined integer multiplier unit. So I knew most of the decoded symbols had to be Huffman coded. The entropy coders were first, followed by the match accelerator, then a flexible parser, 
 then a near-optimal parser (first just using plain Dijkstra's algorithm and greatly optimizing/simplifying that). I refined this framework over a couple weeks to compete against LZX, then LZMA. 
 
