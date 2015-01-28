@@ -174,7 +174,7 @@ Eventually, Microsoft laid us off, and they switched future titles to their high
 arithmetic decoding techniques for a new codec that could beat LZX. 
 
 I eventually wrote LZHAM at home after starting at Valve, in bits and pieces as time permitted. I knew I couldn't afford to do much arithmetic decoding, because I was targeting the
-codec for Xbox 360 CPU which had a slow non-pipelined integer multiplier unit. So I knew most of the decoded symbols had to be Huffman coded. The entropy coders were first, followed by the match accelerator, then a flexible parser, 
+codec for the Xbox 360's custom PPC CPU which had a slow non-pipelined integer multiplier unit. So I knew most of the decoded symbols had to be Huffman coded. The entropy coders were first, followed by the match accelerator, then a flexible parser, 
 then a near-optimal parser (first just using plain Dijkstra's algorithm and greatly optimizing/simplifying that). I refined this framework over a couple weeks to compete against LZX, then LZMA. 
 
 Competing against LZMA using mostly Huffman coding was a surprisingly difficult task. I tuned every aspect of the models and entropy coders to have the 
