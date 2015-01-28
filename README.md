@@ -162,29 +162,3 @@ post I could get my hands on. Especially anything related to LZ optimal parsing,
 learning how to implement optimal parsing (and you can see this if you study the progress I made in the early alphas on Google Code).</p>
 
 <p>Also, thanks to Igor Pavlov, the original creator of LZMA and 7zip, for advancing the start of the art in LZ compression.</p>
-
-<h3>Development History</h3>
-
-I wrote my first LZ codecs in the early 90's, first in 16-bit asm under DOS, then in C. I eventually reverse engineered PKZIP's Deflate, by studying PKWare's appnote.txt 
-and single stepping through PKUNZIP in Borland's Turbo Debugger to fill in the missing bits. This was years before the Infozip project, so I was on my own. This eventually resulted in 
-a really fast Deflate compatible codec that I developed before and after I went to work at Microsoft. They shipped this codec (part of Ensemble's "eslib") in Age of 
-Empires 1/2, Halo Wars, Forza 2, Halo 3, and probably other stuff. I probably had the fastest Deflate compatible decompressor available specifically optimized for Xbox 360.
-
-Eventually, Microsoft laid us off, and they switched future titles to their higher ratio LZX codec. After leaving Microsoft I spent a year researching fast Huffman and 
-arithmetic decoding techniques for a new codec that could beat LZX. 
-
-I eventually wrote LZHAM at home after starting at Valve, in bits and pieces as time permitted. I knew I couldn't afford to do much arithmetic decoding, because I was targeting the
-codec for the Xbox 360's custom PPC CPU which had a slow non-pipelined integer multiplier unit. So I knew most of the decoded symbols had to be Huffman coded. The entropy coders were first, followed by the match accelerator, then a flexible parser, 
-then a near-optimal parser (first just using plain Dijkstra's algorithm and greatly optimizing/simplifying that). I refined this framework over a couple weeks to compete against LZX, then LZMA. 
-
-Competing against LZMA using mostly Huffman coding was a surprisingly difficult task. I tuned every aspect of the models and entropy coders to have the 
-highest compression gain without sacrificing too much decompression throughput, which involved a lot of experimentation, coding instrumentation, and statistical analysis. It was like manually path finding through a multidimensional maze. 
-I tried a number of coding techniques which just were not competitive against LZMA, or were just too slow or not easily scalable to multiple threads.
-
-Eventually, I refactored the codec and released the first alpha on Google Code in 2009, then continued on with the alphas for 7-8 more alpha releases. I optimized the parser by moving away from plain Dijkstra, added an "extreme" parsing mode 
-which can exploit locally suboptimal LZ decisions if they result in a better overall ratio, added a zlib-like API, and wrote examples. v1.0 was released in Jan. 2013 after spending another few weeks further profiling 
-and optimizing the codec to run well on mobile CPU's.
-
-I have a ROLZ variant of LZHAM, which achieves significantly better ratios but decompresses at roughly half the speed (and requires a lot more memory). Unfortunately, the resulting codec is extremely complex and I'm not convinced it's the right answer. 
-
-I also have also integrated LZHAM directly into 7zip GUI and command line, mostly to verify and test LZHAM's streaming interface. If anyone is interested I can finish up the 7zip LZHAM changes and release them somehow.
