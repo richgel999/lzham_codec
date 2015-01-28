@@ -182,5 +182,5 @@ highest compression gain without sacrificing too much decompression throughput, 
 I tried a number of coding techniques which just were not competitive against LZMA, or were just too slow or not easily scalable to multiple threads.
 
 Eventually, I refactored the codec and released the first alpha on Google Code in 2009, then continued on with the alphas for 7-8 more alpha releases. I optimized the parser by moving away from Dijkstra, added an "extreme" parsing mode 
-which can exploit locally suboptimal LZ decisions if they result in a better overall ratio, added zlib compatibility, and wrote examples. v1.0 was released in Jan. 2013 after spending another few weeks further profiling 
+which can exploit locally suboptimal LZ decisions if they result in a better overall ratio, added a zlib-like API, and wrote examples. v1.0 was released in Jan. 2013 after spending another few weeks further profiling 
 and optimizing the codec to run well on mobile CPU's.
