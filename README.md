@@ -167,7 +167,7 @@ learning how to implement optimal parsing (and you can see this if you study the
 
 I wrote my first LZ codecs in the early 90's, first in 16-bit asm under DOS, then in C. I eventually reverse engineered PKZIP's Deflate, by studying PKWare's appnote.txt 
 and single stepping through PKUNZIP in Borland's Turbo Debugger to fill in the missing bits. This was years before the Infozip project, so I was on my own. The results of 
-this work eventually resulted in a really fast Deflate compatible codec that I worked on before and after I went to work at Microsoft. They shipped this codec (part of Ensemble's "eslib") in Age of 
+this work eventually resulted in a really fast Deflate compatible codec that I developed before and after I went to work at Microsoft. They shipped this codec (part of Ensemble's "eslib") in Age of 
 Empires 1/2, Halo Wars, Forza 2, Halo 3, and probably other stuff. I probably had the fastest Deflate compatible decompressor available specifically optimized for Xbox 360.
 
 Eventually, Microsoft laid us off, and they switched future titles to their higher ratio LZX codec. After leaving Microsoft I spent a year researching fast Huffman and 
