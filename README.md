@@ -44,7 +44,7 @@ It should be easy to retarget by modifying the macros in lzham_core.h.</p>
 <p>LZHAM has optional support for multithreaded compression. It supports gcc built-ins or MSVC intrinsics for atomic ops. For threading, it supports OSX 
 specific Pthreads, generic Pthreads, or Windows API's.</p>
 
-<p>For compilers, I've tested with gcc, clang, and MSVC 2008, 2010, and 2013.</p>
+<p>For compilers, I've tested with gcc, clang, and MSVC 2008, 2010, and 2013. In previous alphas I also compiled with TDM-GCC x64.</p>
 
 <h3>API</h3>
 
