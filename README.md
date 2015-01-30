@@ -29,6 +29,18 @@ are important to you.</p>
 
 <p>Some independent benchmarks of the previous alpha versions: http://heartofcomp.altervista.org/MOC/MOCADE.htm, http://mattmahoney.net/dc/text.html</p>
 
+<h3>Most Common Question: So how does it compare to other libs like LZ4?</h3>
+
+There is no single compression algorithm that perfectly suites all use cases and practical constraints. LZ4 and LZHAM are tools which lie at completely opposite ends of the spectrum:
+
+* LZ4: A symmetrical codec with very fast compression and decompression but very low ratios. Its compression ratio is typically less than even zlib's (which uses a 21+ year old algorithm). 
+LZ4 does a good job of trading off a large amount of compression ratio for very fast overall throughput.
+Usage example: Reading LZMA/LZHAM/etc. compressed data from the network and decompressing it, then caching this data locally on disk using LZ4 to reduce disk usage and decrease future loading times.
+
+* LZHAM: A very asymmetrical codec with slow compression speed, but with a very competitive (LZMA-like) compression ratio and reasonably fast decompression speeds (slower than zlib, but faster than LZMA).
+LZHAM trades off a lot of compression throughput for very high compression ratios with higher decompression throughput relative to other codecs in its ratio class (which is LZMA, which runs circles around LZ4's ratio).
+Usage example: Compress your product's data once on a build server, distribute it to end users over a slow media like the internet, then decompress it on the end user's device.
+
 <h3>Compressed Bitstream Compatibility</h3>
 
 <p>v1.0's bitstream format is now locked in place, so any future v1.x releases will be backwards/forward compatible with compressed files 
