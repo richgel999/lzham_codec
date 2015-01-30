@@ -38,7 +38,7 @@ LZ4 does a good job of trading off a large amount of compression ratio for very 
 Usage example: Reading LZMA/LZHAM/etc. compressed data from the network and decompressing it, then caching this data locally on disk using LZ4 to reduce disk usage and decrease future loading times.
 
 * LZHAM: A very asymmetrical codec with slow compression speed, but with a very competitive (LZMA-like) compression ratio and reasonably fast decompression speeds (slower than zlib, but faster than LZMA).
-LZHAM trades off a lot of compression throughput for very high compression ratios with higher decompression throughput relative to other codecs in its ratio class (which is LZMA, which runs circles around LZ4's ratio).
+LZHAM trades off a lot of compression throughput for very high ratios and higher decompression throughput relative to other codecs in its ratio class (which is LZMA, which runs circles around LZ4's ratio).
 Usage example: Compress your product's data once on a build server, distribute it to end users over a slow media like the internet, then decompress it on the end user's device.
 
 <h3>Compressed Bitstream Compatibility</h3>
