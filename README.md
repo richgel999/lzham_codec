@@ -43,7 +43,9 @@ Usage example: Compress your product's data once on a build server, distribute i
 
 <h3>How Much Memory Does It Need?</h3>
 
-Decompression memory usage is low and easy: decomp_mem = dict_size + ~34KB for work tables
+For decompression it's easy to compute:
+* Buffered mode: decomp_mem = dict_size + ~34KB for work tables
+* Unbuffered mode: decomp_mem = ~34KB
 
 I'll be honest here, the compressor is currently an angry beast when it comes to memory. The amount needed depends mostly on the compression level and dict. size. It's *approximately* (max_probes=128 at level -m4):
 comp_mem = min(512 * 1024, dict_size / 8) * max_probes * 6 + dict_size * 9 + 22020096
