@@ -46,7 +46,7 @@ Usage example: Compress your product's data once on a build server, distribute i
 Decompression memory usage is low and easy: decomp_mem = dict_size + ~34KB for work tables
 
 I'll be honest here, the compressor is currently an angry beast when it comes to memory. The amount needed depends mostly on the compression level and dict. size. It's *approximately* (max_probes=128 at level -m4):
-comp_mem = min(512 * 1024, dict_size / 8) * max_probes * 6 + dict_size * 9 + 21*1024*1024
+comp_mem = min(512 * 1024, dict_size / 8) * max_probes * 6 + dict_size * 9 + 22020096
 
 Compression mem usage examples from Windows lzhamtest_x64 (note the equation is pretty off for small dictionary sizes):
 * 32KB: 11MB
