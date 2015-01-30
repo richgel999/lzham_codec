@@ -41,11 +41,11 @@ Usage example: Reading LZMA/LZHAM/etc. compressed data from the network and deco
 LZHAM trades off a lot of compression throughput for very high ratios and higher decompression throughput relative to other codecs in its ratio class (which is LZMA, which runs circles around LZ4's ratio).
 Usage example: Compress your product's data once on a build server, distribute it to end users over a slow media like the internet, then decompress it on the end user's device.
 
-<h3>How much memory does it need?</h3>
+<h3>How Much Memory Does It Need?</h3>
 
 Decompression memory usage is low and easy: decomp_mem = dict_size + ~34KB for work tables
 
-I'll be honest here, the compressor is an angry beast when it comes to memory. The amount needed depends mostly on the compression level and dict. size. It's *approximately* (max_probes=128 at level -m4):
+I'll be honest here, the compressor is currently an angry beast when it comes to memory. The amount needed depends mostly on the compression level and dict. size. It's *approximately* (max_probes=128 at level -m4):
 comp_mem = min(512 * 1024, dict_size / 8) * max_probes * 6 + dict_size * 9 + 21*1024*1024
 
 Compression mem usage examples from Windows lzhamtest_x64 (note the equation is pretty off for small dictionary sizes):
