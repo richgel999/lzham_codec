@@ -41,6 +41,24 @@ Usage example: Reading LZMA/LZHAM/etc. compressed data from the network and deco
 LZHAM trades off a lot of compression throughput for very high ratios and higher decompression throughput relative to other codecs in its ratio class (which is LZMA, which runs circles around LZ4's ratio).
 Usage example: Compress your product's data once on a build server, distribute it to end users over a slow media like the internet, then decompress it on the end user's device.
 
+<h3>How much memory does it need?</h3>
+
+Decompression memory usage is low and easy: decomp_mem = dict_size + ~34KB for work tables
+
+I'll be honest here, the compressor is an angry beast when it comes to memory. The amount needed depends mostly on the compression level and dict. size. It's *approximately* (max_probes=128 at level -m4):
+comp_mem = min(512 * 1024, dict_size / 8) * max_probes * 6 + dict_size * 9 + 21*1024*1024
+
+Compression mem usage examples from Windows lzhamtest_x64 (note the equation is pretty off for small dictionary sizes):
+* 32KB: 11MB
+* 128KB: 21MB
+* 512KB: 63MB
+* 1MB: 118MB
+* 8MB: 478MB
+* 64MB: 982MB
+* 128MB: 1558MB
+* 256MB: 2710MB
+* 512MB: 5014MB
+
 <h3>Compressed Bitstream Compatibility</h3>
 
 <p>v1.0's bitstream format is now locked in place, so any future v1.x releases will be backwards/forward compatible with compressed files 
