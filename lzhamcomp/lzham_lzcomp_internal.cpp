@@ -124,7 +124,7 @@ namespace lzham
          if (params.m_num_seed_bytes > dict_size)
             return false;
       }
-		      
+            
       uint max_block_size = dict_size / 8;
       if (m_params.m_block_size > max_block_size)
       {
@@ -414,6 +414,8 @@ namespace lzham
             flush_code = 1;
             break;
          case LZHAM_SYNC_FLUSH:
+            flush_code = 3;
+            break;
          case LZHAM_NO_FLUSH:
          case LZHAM_FINISH:
             flush_code = 0;
@@ -1873,7 +1875,7 @@ namespace lzham
    #if (defined(LZHAM_DISABLE_RAW_BLOCKS) || defined(LZHAM_LZDEBUG))
        if (0)
    #else
-		// TODO: Allow the user to control this threshold, i.e. if less than 1% then just store uncompressed.
+       // TODO: Allow the user to control this threshold, i.e. if less than 1% then just store uncompressed.
        if (compressed_size >= buf_len)
    #endif
 #endif

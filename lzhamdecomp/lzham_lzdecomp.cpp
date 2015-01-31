@@ -72,6 +72,7 @@ namespace lzham
       adaptive_bit_model m_is_rep2_model[CLZDecompBase::cNumStates];
       
       uint m_dst_ofs;
+      uint m_dst_highwater_ofs;
 
       uint m_step;
       uint m_block_step;
@@ -159,14 +160,15 @@ namespace lzham
       #define LZHAM_BULK_MEMCPY memcpy
       #define LZHAM_MEMCPY memcpy
    #endif
+
    // Flush the output buffer/dictionary by doing a coroutine return to the caller.
-   // The caller must permit the decompressor to flush total_bytes from the dictionary, or (in the 
-   // case of corrupted data, or a bug) we must report a DEST_BUF_TOO_SMALL error.
-   #define LZHAM_FLUSH_OUTPUT_BUFFER(total_bytes) \
+   // Buffered mode only.
+   #define LZHAM_FLUSH_DICT_TO_OUTPUT_BUFFER(dict_ofs) \
       LZHAM_SAVE_STATE \
-      m_pFlush_src = m_pDecomp_buf + m_seed_bytes_to_ignore_when_flushing; \
-      m_flush_num_bytes_remaining = total_bytes - m_seed_bytes_to_ignore_when_flushing; \
+      m_pFlush_src = m_pDecomp_buf + m_seed_bytes_to_ignore_when_flushing + m_dst_highwater_ofs; \
+      m_flush_num_bytes_remaining = dict_ofs - m_seed_bytes_to_ignore_when_flushing - m_dst_highwater_ofs; \
       m_seed_bytes_to_ignore_when_flushing = 0; \
+      m_dst_highwater_ofs = dict_ofs & dict_size_mask; \
       while (m_flush_num_bytes_remaining) \
       { \
          m_flush_n = LZHAM_MIN(m_flush_num_bytes_remaining, *m_pOut_buf_size); \
@@ -218,6 +220,7 @@ namespace lzham
       m_initial_step = 0;
             
       m_dst_ofs = 0;
+      m_dst_highwater_ofs = 0;
 
       m_pIn_buf = NULL;
       m_pIn_buf_size = NULL;
@@ -354,26 +357,26 @@ namespace lzham
          }
 
          {
-				// Was written by lzcompressor::send_configuration().
+            // Was written by lzcompressor::send_configuration().
             //uint tmp;
             //LZHAM_SYMBOL_CODEC_DECODE_GET_BITS(codec, tmp, 2);
          }
 
-			uint max_update_interval = m_params.m_table_max_update_interval, update_interval_slow_rate =  m_params.m_table_update_interval_slow_rate;
-			if (!max_update_interval && !update_interval_slow_rate)
-			{
-				uint rate = m_params.m_table_update_rate;
-				if (!rate)
-					rate = LZHAM_DEFAULT_TABLE_UPDATE_RATE;
-				rate = math::clamp<uint>(rate, 1, LZHAM_FASTEST_TABLE_UPDATE_RATE) - 1;
-				max_update_interval = g_table_update_settings[rate].m_max_update_interval;
-				update_interval_slow_rate = g_table_update_settings[rate].m_slow_rate;
-			}
+         uint max_update_interval = m_params.m_table_max_update_interval, update_interval_slow_rate =  m_params.m_table_update_interval_slow_rate;
+         if (!max_update_interval && !update_interval_slow_rate)
+         {
+            uint rate = m_params.m_table_update_rate;
+            if (!rate)
+               rate = LZHAM_DEFAULT_TABLE_UPDATE_RATE;
+            rate = math::clamp<uint>(rate, 1, LZHAM_FASTEST_TABLE_UPDATE_RATE) - 1;
+            max_update_interval = g_table_update_settings[rate].m_max_update_interval;
+            update_interval_slow_rate = g_table_update_settings[rate].m_slow_rate;
+         }
 
          bool succeeded = m_lit_table.init2(false, 256, max_update_interval, update_interval_slow_rate, NULL);
          
          //succeeded = succeeded && m_delta_lit_table.init2(false, 256, max_update_interval, update_interval_slow_rate, NULL);
-			succeeded = succeeded && m_delta_lit_table.assign(m_lit_table);
+         succeeded = succeeded && m_delta_lit_table.assign(m_lit_table);
          
          succeeded = succeeded && m_main_table.init2(false, CLZDecompBase::cLZXNumSpecialLengths + (m_lzBase.m_num_lzx_slots - CLZDecompBase::cLZXLowestUsableMatchSlot) * 8, max_update_interval, update_interval_slow_rate, NULL);
 
@@ -404,6 +407,8 @@ namespace lzham
             // Sync block
             // Reset either the symbol table update rates, or all statistics, then force a coroutine return to give the caller a chance to handle the output right now.
             LZHAM_SYMBOL_CODEC_DECODE_GET_BITS(codec, m_tmp, CLZDecompBase::cBlockFlushTypeBits);
+
+            // See lzcompressor::send_sync_block() (TODO: make these an enum)
             if (m_tmp == 1)
                reset_huffman_table_update_rates();
             else if (m_tmp == 2)
@@ -429,20 +434,35 @@ namespace lzham
                for ( ; ; ) { LZHAM_CR_RETURN(m_state, LZHAM_DECOMP_STATUS_FAILED_BAD_SYNC_BLOCK); }
             }
             
-            if (m_tmp == 2)
+            // See lzcompressor::send_sync_block() (TODO: make these an enum)            
+            if ((m_tmp == 2) || (m_tmp == 3))
             {
-               // It's a full flush, so immediately give caller whatever output we have. Also gives the caller a chance to reposition the input stream ptr somewhere else before continuing.
-               // It would be nice to do this with partial flushes too, but the current way the output buffer is flushed makes this tricky.
+               // It's a sync or full flush, so immediately give caller whatever output we have. Also gives the caller a chance to reposition the input stream ptr somewhere else before continuing.
                LZHAM_SYMBOL_CODEC_DECODE_END(codec);
 
                if ((!unbuffered) && (dst_ofs))
                {
-                  LZHAM_FLUSH_OUTPUT_BUFFER(dst_ofs);
+                  LZHAM_FLUSH_DICT_TO_OUTPUT_BUFFER(dst_ofs);
                }
                else
                {
+                  if (unbuffered)
+                  {
+                     LZHAM_ASSERT(dst_ofs >= m_dst_highwater_ofs);
+                  }
+                  else
+                  {
+                     LZHAM_ASSERT(!m_dst_highwater_ofs);
+                  }
+                  
+                  // unbuffered, or dst_ofs==0
                   *m_pIn_buf_size = static_cast<size_t>(codec.decode_get_bytes_consumed());
-                  *m_pOut_buf_size = dst_ofs;
+                  *m_pOut_buf_size = dst_ofs - m_dst_highwater_ofs;
+                  
+                  // Partial/sync flushes in unbuffered mode details:
+                  // We assume the caller doesn't move the output buffer between calls AND the pointer to the output buffer input parameter won't change between calls (i.e.
+                  // it *always* points to the beginning of the decompressed stream). The caller will need to track the current output buffer offset.
+                  m_dst_highwater_ofs = dst_ofs;
                   
                   LZHAM_SAVE_STATE
                   LZHAM_CR_RETURN(m_state, LZHAM_DECOMP_STATUS_NOT_FINISHED);
@@ -452,8 +472,6 @@ namespace lzham
                }
                
                LZHAM_SYMBOL_CODEC_DECODE_BEGIN(codec);
-
-               dst_ofs = 0;
             }
          }
          else if (m_block_type == CLZDecompBase::cRawBlock)
@@ -510,7 +528,7 @@ namespace lzham
                if ((!unbuffered) && (dst_ofs > dict_size_mask))
                {
                   LZHAM_SYMBOL_CODEC_DECODE_END(codec);
-                  LZHAM_FLUSH_OUTPUT_BUFFER(dict_size);
+                  LZHAM_FLUSH_DICT_TO_OUTPUT_BUFFER(dict_size);
                   LZHAM_SYMBOL_CODEC_DECODE_BEGIN(codec);
                   dst_ofs = 0;
                }
@@ -576,7 +594,7 @@ namespace lzham
                {
                   LZHAM_ASSERT(dst_ofs == dict_size);
 
-                  LZHAM_FLUSH_OUTPUT_BUFFER(dict_size);
+                  LZHAM_FLUSH_DICT_TO_OUTPUT_BUFFER(dict_size);
 
                   dst_ofs = 0;
                }
@@ -677,7 +695,7 @@ namespace lzham
                      // Determine delta literal's partial context.
                      match_hist0_ofs = dst_ofs - match_hist0;
                      rep_lit0 = pDst[match_hist0_ofs & dict_size_mask];
-														
+                                          
 #undef LZHAM_SAVE_LOCAL_STATE
 #undef LZHAM_RESTORE_LOCAL_STATE
 #define LZHAM_SAVE_LOCAL_STATE m_rep_lit0 = rep_lit0;
@@ -708,7 +726,7 @@ namespace lzham
                   if ((!unbuffered) && (LZHAM_BUILTIN_EXPECT(dst_ofs > dict_size_mask, 0)))
                   {
                      LZHAM_SYMBOL_CODEC_DECODE_END(codec);
-                     LZHAM_FLUSH_OUTPUT_BUFFER(dict_size);
+                     LZHAM_FLUSH_DICT_TO_OUTPUT_BUFFER(dict_size);
                      LZHAM_SYMBOL_CODEC_DECODE_BEGIN(codec);
                      dst_ofs = 0;
                   }
@@ -953,7 +971,7 @@ namespace lzham
                         if (LZHAM_BUILTIN_EXPECT(dst_ofs > dict_size_mask, 0))
                         {
                            LZHAM_SYMBOL_CODEC_DECODE_END(codec);
-                           LZHAM_FLUSH_OUTPUT_BUFFER(dict_size);
+                           LZHAM_FLUSH_DICT_TO_OUTPUT_BUFFER(dict_size);
                            LZHAM_SYMBOL_CODEC_DECODE_BEGIN(codec);
                            dst_ofs = 0;
                         }
@@ -1018,14 +1036,14 @@ namespace lzham
             m_status = LZHAM_DECOMP_STATUS_FAILED_BAD_CODE;
          }
 
-		   m_block_index++;
+         m_block_index++;
 
       } while (m_status == LZHAM_DECOMP_STATUS_NOT_FINISHED);
 
       if ((!unbuffered) && (dst_ofs))
       {
          LZHAM_SYMBOL_CODEC_DECODE_END(codec);
-         LZHAM_FLUSH_OUTPUT_BUFFER(dst_ofs);
+         LZHAM_FLUSH_DICT_TO_OUTPUT_BUFFER(dst_ofs);
          LZHAM_SYMBOL_CODEC_DECODE_BEGIN(codec);
       }
 
@@ -1058,7 +1076,9 @@ namespace lzham
       LZHAM_SYMBOL_CODEC_DECODE_END(codec);
 
       *m_pIn_buf_size = static_cast<size_t>(codec.stop_decoding());
-      *m_pOut_buf_size = unbuffered ? dst_ofs : 0;
+      *m_pOut_buf_size = unbuffered ? (dst_ofs - m_dst_highwater_ofs) : 0;
+      m_dst_highwater_ofs = dst_ofs;
+
       LZHAM_CR_RETURN(m_state, m_status);
 
       for ( ; ; )
@@ -1219,6 +1239,9 @@ namespace lzham
          }
          else
          {
+            // In unbuffered mode, the caller is not allowed to move the output buffer and the output pointer MUST always point to the beginning of the output buffer.
+            // Also, the output buffer size must indicate the full size of the output buffer. The decompressor will track the current output offset, and during partial/sync
+            // flushes it'll report how many bytes it has written since the call. 
             if ((pState->m_pOrig_out_buf != pOut_buf) || (pState->m_orig_out_buf_size != *pOut_buf_size))
             {
                return LZHAM_DECOMP_STATUS_INVALID_PARAMETER;
@@ -1228,10 +1251,10 @@ namespace lzham
 
       lzham_decompress_status_t status;
 
-		if (pState->m_params.m_decompress_flags & LZHAM_DECOMP_FLAG_OUTPUT_UNBUFFERED)
-			status = pState->decompress<true>();
-		else
-			status = pState->decompress<false>();
+      if (pState->m_params.m_decompress_flags & LZHAM_DECOMP_FLAG_OUTPUT_UNBUFFERED)
+         status = pState->decompress<true>();
+      else
+         status = pState->decompress<false>();
       
       return status;
    }
