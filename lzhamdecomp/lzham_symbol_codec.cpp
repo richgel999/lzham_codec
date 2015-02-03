@@ -383,12 +383,16 @@ namespace lzham
       }
 
       m_total_syms = total_syms;
+      
+      uint max_table_bits = 0;
 
-      if (m_total_syms <= 16)
-         m_decoder_table_bits = 0;
+      if (m_total_syms <= 8)
+         max_table_bits = 4;
       else
-         m_decoder_table_bits = static_cast<uint8>(math::minimum(1 + math::ceil_log2i(m_total_syms), prefix_coding::cMaxTableBits));
+         max_table_bits = 1 + math::ceil_log2i(m_total_syms);
 
+      m_decoder_table_bits = static_cast<uint8>(math::minimum(max_table_bits, prefix_coding::cMaxTableBits));
+      
       if (m_encoding)
       {
          lzham_delete(m_pDecode_tables);
