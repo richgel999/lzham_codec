@@ -29,6 +29,8 @@ are important to you.</p>
 
 <p>Some independent benchmarks of the previous alpha versions: http://heartofcomp.altervista.org/MOC/MOCADE.htm, http://mattmahoney.net/dc/text.html</p>
 
+<p>LZHAM has been integrated into the 7zip archiver as a custom codec plugin: http://richg42.blogspot.com/2015/02/lzham-10-integrated-into-7zip-command.html</p>
+
 <h3>Most Common Question: So how does it compare to other libs like LZ4?</h3>
 
 There is no single compression algorithm that perfectly suites all use cases and practical constraints. LZ4 and LZHAM are tools which lie at completely opposite ends of the spectrum:
