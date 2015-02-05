@@ -31,6 +31,8 @@ namespace lzham
       
       template<bool unbuffered> lzham_decompress_status_t decompress();
       
+      void reset_huff_tables();
+      void reset_arith_tables();
       void reset_all_tables();
       void reset_huffman_table_update_rates();
 
@@ -241,9 +243,31 @@ namespace lzham
       m_z_dict_adler32 = 0;
 
       m_tmp = 0;
+
+      m_match_hist0 = 0;
+      m_match_hist1 = 0;
+      m_match_hist2 = 0;
+      m_match_hist3 = 0;
+      m_cur_state = 0;
+      
+      m_start_block_dst_ofs = 0;
+      m_block_type = 0;
+      m_flush_num_bytes_remaining = 0;
+      m_flush_n = 0;
+      m_file_src_file_adler32 = 0;
+      m_rep_lit0 = 0;
+      m_match_len = 0;
+      m_match_slot = 0;
+      m_extra_bits = 0;
+      m_num_extra_bits = 0;
+      m_src_ofs = 0;
+      m_pCopy_src = NULL;
+      m_num_raw_bytes_remaining = 0;
+      
+      m_codec.clear();
    }
 
-   void lzham_decompressor::reset_all_tables()
+   void lzham_decompressor::reset_huff_tables()
    {
       m_lit_table.reset();
      m_delta_lit_table.reset();
@@ -257,7 +281,10 @@ namespace lzham
          m_large_len_table[i].reset();
 
       m_dist_lsb_table.reset();
+   }
 
+   void lzham_decompressor::reset_arith_tables()
+   {
       for (uint i = 0; i < LZHAM_ARRAY_SIZE(m_is_match_model); i++)
          m_is_match_model[i].clear();
 
@@ -269,6 +296,13 @@ namespace lzham
          m_is_rep1_model[i].clear();
          m_is_rep2_model[i].clear();
       }
+   }
+
+   void lzham_decompressor::reset_all_tables()
+   {
+      reset_huff_tables();
+
+      reset_arith_tables();
    }
 
    void lzham_decompressor::reset_huffman_table_update_rates()
@@ -374,17 +408,15 @@ namespace lzham
          }
 
          bool succeeded = m_lit_table.init2(false, 256, max_update_interval, update_interval_slow_rate, NULL);
-         
-         //succeeded = succeeded && m_delta_lit_table.init2(false, 256, max_update_interval, update_interval_slow_rate, NULL);
          succeeded = succeeded && m_delta_lit_table.assign(m_lit_table);
          
          succeeded = succeeded && m_main_table.init2(false, CLZDecompBase::cLZXNumSpecialLengths + (m_lzBase.m_num_lzx_slots - CLZDecompBase::cLZXLowestUsableMatchSlot) * 8, max_update_interval, update_interval_slow_rate, NULL);
 
-         for (uint i = 0; i < 2; i++)
-         {
-            succeeded = succeeded && m_rep_len_table[i].init2(false, CLZDecompBase::cNumHugeMatchCodes + (CLZDecompBase::cMaxMatchLen - CLZDecompBase::cMinMatchLen + 1), max_update_interval, update_interval_slow_rate, NULL);
-            succeeded = succeeded && m_large_len_table[i].init2(false, CLZDecompBase::cNumHugeMatchCodes + CLZDecompBase::cLZXNumSecondaryLengths, max_update_interval, update_interval_slow_rate, NULL);
-         }
+         succeeded = succeeded && m_rep_len_table[0].init2(false, CLZDecompBase::cNumHugeMatchCodes + (CLZDecompBase::cMaxMatchLen - CLZDecompBase::cMinMatchLen + 1), max_update_interval, update_interval_slow_rate, NULL);
+         succeeded = succeeded && m_rep_len_table[1].assign(m_rep_len_table[0]);
+
+         succeeded = succeeded && m_large_len_table[0].init2(false, CLZDecompBase::cNumHugeMatchCodes + CLZDecompBase::cLZXNumSecondaryLengths, max_update_interval, update_interval_slow_rate, NULL);
+         succeeded = succeeded && m_large_len_table[1].assign(m_large_len_table[0]);
 
          succeeded = succeeded && m_dist_lsb_table.init2(false, 16, max_update_interval, update_interval_slow_rate, NULL);
          if (!succeeded)
@@ -1184,6 +1216,7 @@ namespace lzham
 
       pState->init();
 
+      pState->reset_arith_tables();
       return pState;
    }
 
