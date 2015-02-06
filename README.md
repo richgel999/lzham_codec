@@ -33,7 +33,7 @@ are important to you.</p>
 
 <h3>10GB Benchmark Results</h3>
 
-Results with [7zip-LZHAM 9.38 32-bit](http://richg42.blogspot.com/2015/02/7zip-938-custom-codec-plugin-for-lzham.html) (64MB dictionary) on [Matt Mahoney's 10GB benchmark](http://mattmahoney.net/dc/10gb.html)
+Results with [7zip-LZHAM 9.38 32-bit](http://richg42.blogspot.com/2015/02/7zip-938-custom-codec-plugin-for-lzham.html) (64MB dictionary) on [Matt Mahoney's 10GB benchmark](http://mattmahoney.net/dc/10gb.html):
 
 ```
 LZHAM (-mx=8): 3,577,047,629 Archive Test Time: 70.652 secs
