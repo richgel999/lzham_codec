@@ -31,6 +31,14 @@ are important to you.</p>
 
 <p>LZHAM has been integrated into the 7zip archiver (command line and GUI) as a custom codec plugin: http://richg42.blogspot.com/2015/02/lzham-10-integrated-into-7zip-command.html</p>
 
+<h3>10GB Benchmark Results</h3>
+
+Results with [7zip-LZHAM 9.38 32-bit](http://richg42.blogspot.com/2015/02/7zip-938-custom-codec-plugin-for-lzham.html) (64MB dictionary) on [Matt Mahoney's 10GB benchmark](http://mattmahoney.net/dc/10gb.html)
+
+LZHAM (-mx=8): 3,577,047,629 Archive Test Time: 70.652 secs
+LZHAM (-mx=9): 3,573,782,721 Archive Test Time: 71.292 secs
+LZMA  (-mx=9): 3,560,052,414 Archive Test Time: 223.050 secs
+
 <h3>Most Common Question: So how does it compare to other libs like LZ4?</h3>
 
 There is no single compression algorithm that perfectly suites all use cases and practical constraints. LZ4 and LZHAM are tools which lie at completely opposite ends of the spectrum:
