@@ -428,6 +428,8 @@ namespace lzham
       if (!m_total_syms)
          return true;
 
+      bool sym_freq_all_ones = false;
+
       if (m_initial_sym_freq.size())
       {
          m_update_cycle = 0;
@@ -435,6 +437,8 @@ namespace lzham
          {
             uint sym_freq = m_initial_sym_freq[i];
             m_sym_freq[i] = static_cast<uint16>(sym_freq);
+            
+            // Slam m_update_cycle to a specific value so update_tables() sets m_total_count to the proper value
             m_update_cycle += sym_freq;
          }
       }
@@ -442,16 +446,19 @@ namespace lzham
       {
          for (uint i = 0; i < m_total_syms; i++)
             m_sym_freq[i] = 1;
+         
+         // Slam m_update_cycle to a specific value so update_tables() sets m_total_count to the proper value
          m_update_cycle = m_total_syms;
+         
+         sym_freq_all_ones = true;
       }
 
       m_total_count = 0;
       m_symbols_until_update = 0;
-
-      if (!update())
+            
+      if (!update_tables(LZHAM_MIN(m_max_cycle, 16), sym_freq_all_ones)) // this was 8 in the alphas
          return false;
-
-      m_symbols_until_update = m_update_cycle = LZHAM_MIN(m_max_cycle, 16); // this was 8 in the alphas
+                           
       return true;
    }
 
@@ -485,8 +492,8 @@ namespace lzham
 
       m_symbols_until_update = m_update_cycle = LZHAM_MIN(8, m_update_cycle);
    }
-
-   bool raw_quasi_adaptive_huffman_data_model::update()
+      
+   bool raw_quasi_adaptive_huffman_data_model::update_tables(int force_update_cycle, bool sym_freq_all_ones)
    {
       LZHAM_ASSERT(!m_symbols_until_update);
       m_total_count += m_update_cycle;
@@ -495,44 +502,80 @@ namespace lzham
       while (m_total_count >= 32768)
          rescale();
 
-      uint table_size = get_generate_huffman_codes_table_size();
-      void *pTables = alloca(table_size);
+      uint max_code_size = 0;
 
-      uint max_code_size, total_freq;
-      bool status = generate_huffman_codes(pTables, m_total_syms, &m_sym_freq[0], &m_code_sizes[0], max_code_size, total_freq);
-      LZHAM_ASSERT(status);
-      LZHAM_ASSERT(total_freq == m_total_count);
-      if ((!status) || (total_freq != m_total_count))
-         return false;
-
-      if (max_code_size > prefix_coding::cMaxExpectedCodeSize)
+      if ((sym_freq_all_ones) && (m_total_syms >= 2))
       {
-         status = prefix_coding::limit_max_code_size(m_total_syms, &m_code_sizes[0], prefix_coding::cMaxExpectedCodeSize);
-         LZHAM_ASSERT(status);
-         if (!status)
-            return false;
+         // Shortcut building the Huffman codes if we know all the sym freqs are 1.
+         uint base_code_size = math::floor_log2i(m_total_syms);
+         uint num_left = m_total_syms - (1 << base_code_size);
+         num_left *= 2;
+         if (num_left > m_total_syms)
+            num_left = m_total_syms;
+
+         memset(&m_code_sizes[0], base_code_size + 1, num_left);
+         memset(&m_code_sizes[num_left], base_code_size, m_total_syms - num_left);  
+            
+         max_code_size = base_code_size + (num_left ? 1 : 0);
       }
 
+      bool status = false;
+      if (!max_code_size)
+      {
+         uint table_size = get_generate_huffman_codes_table_size();
+         void *pTables = alloca(table_size);
+
+         uint total_freq = 0;                  
+         status = generate_huffman_codes(pTables, m_total_syms, &m_sym_freq[0], &m_code_sizes[0], max_code_size, total_freq);
+         LZHAM_ASSERT(status);
+         LZHAM_ASSERT(total_freq == m_total_count);
+         if ((!status) || (total_freq != m_total_count))
+            return false;
+
+         if (max_code_size > prefix_coding::cMaxExpectedCodeSize)
+         {
+            status = prefix_coding::limit_max_code_size(m_total_syms, &m_code_sizes[0], prefix_coding::cMaxExpectedCodeSize);
+            LZHAM_ASSERT(status);
+            if (!status)
+               return false;
+         }
+      }
+
+      if (force_update_cycle >= 0)
+         m_symbols_until_update = m_update_cycle = force_update_cycle;
+      else
+      {
+         m_update_cycle = (31U + m_update_cycle * LZHAM_MAX(32U, (m_adapt_rate ? m_adapt_rate : LZHAM_DEFAULT_ADAPT_RATE))) >> 5U;
+
+         if (m_update_cycle > m_max_cycle)
+            m_update_cycle = m_max_cycle;
+
+         m_symbols_until_update = m_update_cycle;
+      }
+            
       if (m_encoding)
          status = prefix_coding::generate_codes(m_total_syms, &m_code_sizes[0], &m_codes[0]);
       else
-         status = prefix_coding::generate_decoder_tables(m_total_syms, &m_code_sizes[0], m_pDecode_tables, m_decoder_table_bits);
+      {
+         uint actual_table_bits = m_decoder_table_bits;
+
+         // Try to see if using the accel table is actually worth the trouble of constructing it.
+         uint cost_to_use_table = (1 << actual_table_bits) + 64;
+         uint cost_to_not_use_table = m_symbols_until_update * math::floor_log2i(m_total_syms);
+         if (cost_to_not_use_table <= cost_to_use_table)
+            actual_table_bits = 0;
+
+         status = prefix_coding::generate_decoder_tables(m_total_syms, &m_code_sizes[0], m_pDecode_tables, actual_table_bits);
+      }
 
       LZHAM_ASSERT(status);
       if (!status)
          return false;
-
-      m_update_cycle = (31U + m_update_cycle * LZHAM_MAX(32U, (m_adapt_rate ? m_adapt_rate : LZHAM_DEFAULT_ADAPT_RATE))) >> 5U;
-
-      if (m_update_cycle > m_max_cycle)
-         m_update_cycle = m_max_cycle;
-
-      m_symbols_until_update = m_update_cycle;
-
+               
       return true;
    }
 
-   bool raw_quasi_adaptive_huffman_data_model::update(uint sym)
+   bool raw_quasi_adaptive_huffman_data_model::update_sym(uint sym)
    {
       uint freq = m_sym_freq[sym];
       freq++;
@@ -542,7 +585,7 @@ namespace lzham
 
       if (--m_symbols_until_update == 0)
       {
-         if (!update())
+         if (!update_tables())
             return false;
       }
 
@@ -790,7 +833,7 @@ namespace lzham
       if (--model.m_symbols_until_update == 0)
       {
          m_total_model_updates++;
-         if (!model.update())
+         if (!model.update_tables())
             return false;
       }
       return true;
@@ -1263,7 +1306,7 @@ namespace lzham
       if (--model.m_symbols_until_update == 0)
       {
          m_total_model_updates++;
-         model.update();
+         model.update_tables();
       }
 
       return sym;

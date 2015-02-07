@@ -197,13 +197,9 @@ namespace lzham
          m_pFlush_src += m_flush_n; \
          m_flush_num_bytes_remaining -= m_flush_n; \
       } \
-      LZHAM_RESTORE_STATE \
+      LZHAM_RESTORE_STATE
 
-   #if LZHAM_USE_ALL_ARITHMETIC_CODING
-      #define LZHAM_DECOMPRESS_DECODE_ADAPTIVE_SYMBOL(codec, result, model) LZHAM_SYMBOL_CODEC_DECODE_ADAPTIVE_ARITHMETIC(codec, result, model)
-   #else
-      #define LZHAM_DECOMPRESS_DECODE_ADAPTIVE_SYMBOL(codec, result, model) LZHAM_SYMBOL_CODEC_DECODE_ADAPTIVE_HUFFMAN(codec, result, model)
-   #endif
+   #define LZHAM_DECOMPRESS_DECODE_ADAPTIVE_SYMBOL(codec, result, model) LZHAM_SYMBOL_CODEC_DECODE_ADAPTIVE_HUFFMAN(codec, result, model)
    
    //------------------------------------------------------------------------------------------------------------------
    void lzham_decompressor::init()

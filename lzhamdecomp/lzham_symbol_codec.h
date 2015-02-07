@@ -45,7 +45,7 @@ namespace lzham
       void rescale();
       void reset_update_rate();
 
-      bool update(uint sym);
+      bool update_sym(uint sym);
 
       inline bit_cost_t get_cost(uint sym) const { return convert_to_scaled_bitcost(m_code_sizes[sym]); }
 
@@ -72,7 +72,7 @@ namespace lzham
       uint16                           m_adapt_rate; // def=10, 8 or higher, scaled by 8, controls the slowing of the update update freq, higher=more rapid slowing (faster decode/lower ratio)
       bool                             m_encoding;
 
-      bool update();
+      bool update_tables(int force_update_cycle = -1, bool sym_freq_all_ones = false);
 
       friend class symbol_codec;
    };
@@ -468,7 +468,7 @@ namespace lzham
    LZHAM_ASSERT(freq <= UINT16_MAX); \
    if (LZHAM_BUILTIN_EXPECT(--pModel->m_symbols_until_update == 0, 0)) \
    { \
-      pModel->update(); \
+      pModel->update_tables(); \
    } \
 }
 #else
@@ -525,7 +525,7 @@ namespace lzham
    LZHAM_ASSERT(freq <= UINT16_MAX); \
    if (LZHAM_BUILTIN_EXPECT(--pModel->m_symbols_until_update == 0, 0)) \
    { \
-      pModel->update(); \
+      pModel->update_tables(); \
    } \
 }
 #endif

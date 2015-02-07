@@ -610,7 +610,7 @@ namespace lzham
          if (m_cur_state < CLZBase::cNumLitStates)
          {
             // literal
-            if (!m_lit_table.update(lit)) return false;
+            if (!m_lit_table.update_sym(lit)) return false;
          }
          else
          {
@@ -619,7 +619,7 @@ namespace lzham
             
             uint delta_lit = rep_lit0 ^ lit;
 				            
-            if (!m_delta_lit_table.update(delta_lit)) return false;
+            if (!m_delta_lit_table.update_sym(delta_lit)) return false;
          }
 
          if (m_cur_state < 4) m_cur_state = 0; else if (m_cur_state < 10) m_cur_state -= 3; else m_cur_state -= 6;
@@ -653,11 +653,11 @@ namespace lzham
 
                   if (lzdec.m_len > CLZBase::cMaxMatchLen)
                   {
-                     if (!m_rep_len_table[m_cur_state >= CLZBase::cNumLitStates].update((CLZBase::cMaxMatchLen + 1) - CLZBase::cMinMatchLen)) return false;
+                     if (!m_rep_len_table[m_cur_state >= CLZBase::cNumLitStates].update_sym((CLZBase::cMaxMatchLen + 1) - CLZBase::cMinMatchLen)) return false;
                   }
                   else
                   {
-                     if (!m_rep_len_table[m_cur_state >= CLZBase::cNumLitStates].update(lzdec.m_len - CLZBase::cMinMatchLen)) return false;
+                     if (!m_rep_len_table[m_cur_state >= CLZBase::cNumLitStates].update_sym(lzdec.m_len - CLZBase::cMinMatchLen)) return false;
                   }
 
                   m_cur_state = (m_cur_state < CLZBase::cNumLitStates) ? 8 : 11;
@@ -670,11 +670,11 @@ namespace lzham
 
                if (lzdec.m_len > CLZBase::cMaxMatchLen)
                {
-                  if (!m_rep_len_table[m_cur_state >= CLZBase::cNumLitStates].update((CLZBase::cMaxMatchLen + 1) - CLZBase::cMinMatchLen)) return false;
+                  if (!m_rep_len_table[m_cur_state >= CLZBase::cNumLitStates].update_sym((CLZBase::cMaxMatchLen + 1) - CLZBase::cMinMatchLen)) return false;
                }
                else
                {
-                  if (!m_rep_len_table[m_cur_state >= CLZBase::cNumLitStates].update(lzdec.m_len - CLZBase::cMinMatchLen)) return false;
+                  if (!m_rep_len_table[m_cur_state >= CLZBase::cNumLitStates].update_sym(lzdec.m_len - CLZBase::cMinMatchLen)) return false;
                }
 
                if (match_hist_index == 1)
@@ -742,24 +742,24 @@ namespace lzham
 
             uint main_sym = match_low_sym | (match_high_sym << 3);
 
-            if (!m_main_table.update(CLZBase::cLZXNumSpecialLengths + main_sym)) return false;
+            if (!m_main_table.update_sym(CLZBase::cLZXNumSpecialLengths + main_sym)) return false;
 
             if (large_len_sym >= 0)
             {
                if (lzdec.m_len > CLZBase::cMaxMatchLen)
                {
-                  if (!m_large_len_table[m_cur_state >= CLZBase::cNumLitStates].update((CLZBase::cMaxMatchLen + 1) - 9)) return false;
+                  if (!m_large_len_table[m_cur_state >= CLZBase::cNumLitStates].update_sym((CLZBase::cMaxMatchLen + 1) - 9)) return false;
                }
                else
                {
-                  if (!m_large_len_table[m_cur_state >= CLZBase::cNumLitStates].update(large_len_sym)) return false;
+                  if (!m_large_len_table[m_cur_state >= CLZBase::cNumLitStates].update_sym(large_len_sym)) return false;
                }
             }
 
             uint num_extra_bits = lzbase.m_lzx_position_extra_bits[match_slot];
             if (num_extra_bits >= 3)
             {
-               if (!m_dist_lsb_table.update(match_extra & 15)) return false;
+               if (!m_dist_lsb_table.update_sym(match_extra & 15)) return false;
             }
 
             update_match_hist(lzdec.m_dist);
