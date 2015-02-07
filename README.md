@@ -39,6 +39,7 @@ Results with [7zip-LZHAM 9.38 32-bit](http://richg42.blogspot.com/2015/02/7zip-9
 LZHAM (-mx=8): 3,577,047,629 Archive Test Time: 70.652 secs
 LZHAM (-mx=9): 3,573,782,721 Archive Test Time: 71.292 secs
 LZMA  (-mx=9): 3,560,052,414 Archive Test Time: 223.050 secs
+7z .ZIP      : 4,681,291,655 Archive Test Time: 73.304 secs
 ```
 
 <h3>Most Common Question: So how does it compare to other libs like LZ4?</h3>
