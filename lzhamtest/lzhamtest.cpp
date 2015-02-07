@@ -14,7 +14,7 @@
 #include <assert.h>
 #include <memory.h>
 #include <stdarg.h>
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(__FreeBSD__)
 #include <malloc.h>
 #endif
 #include <vector>
@@ -46,6 +46,14 @@
    #define fopen fopen
    #define _fseeki64 fseek
    #define _ftelli64 ftell
+#elif defined(__FreeBSD__)
+   #include <unistd.h>
+   #define Sleep(ms) usleep(ms*1000)
+   #define _aligned_malloc(size, alignment) aligned_alloc(alignment, size)
+   #define _aligned_free free
+   #define fopen fopen
+   #define _fseeki64 fseeko
+   #define _ftelli64 ftello
 #else
    #include <unistd.h>
    #define Sleep(ms) usleep(ms*1000)

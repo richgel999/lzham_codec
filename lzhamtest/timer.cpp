@@ -27,7 +27,7 @@ inline void query_counter_frequency(timer_ticks *pTicks)
    QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(pTicks));
 }
 #elif defined(__GNUC__)
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__FreeBSD__)
 #include <sys/time.h>
 #else
 #include <sys/timex.h>

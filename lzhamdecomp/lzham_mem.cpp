@@ -6,6 +6,9 @@
    #include <malloc/malloc.h>
 #elif defined(__FreeBSD__) || defined(__NetBSD__)
    #include <malloc_np.h>
+   #if defined(__FreeBSD__)
+      #define malloc(size) aligned_alloc((LZHAM_MIN_ALLOC_ALIGNMENT), (size))
+   #endif
 #else
    #include <malloc.h>
 #endif

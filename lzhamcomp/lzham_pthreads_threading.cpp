@@ -27,7 +27,7 @@
 #include <process.h>
 #endif
 
-#if defined(__GNUC__) && !defined(__APPLE__) && !defined(__MINGW32__)
+#if defined(__GNUC__) && !defined(__APPLE__) && !defined(__MINGW32__) && !defined(__FreeBSD__)
 #include <sys/sysinfo.h>
 #endif
 
@@ -211,7 +211,7 @@ namespace lzham
 
    uint lzham_get_max_helper_threads()
    {
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(__FreeBSD__)
       int num_procs = static_cast<int>(sysconf(_SC_NPROCESSORS_ONLN));
       return (num_procs >= 1) ? (num_procs - 1) : 0;
 #elif (1)

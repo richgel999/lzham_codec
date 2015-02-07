@@ -241,7 +241,7 @@ const bool c_lzham_big_endian_platform = !c_lzham_little_endian_platform;
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(__FreeBSD__)
 #include <malloc.h>
 #endif
 #include <stdarg.h>
