@@ -3,26 +3,26 @@
 #pragma once
 
 // TODO
-#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__)
-   #undef INT8_MIN
-   #undef INT8_MAX
+#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__NetBSD__) \
+    || defined(linux) || defined(__linux) || defined(__linux__)
+
    #undef UINT8_MIN
    #undef UINT8_MAX
-
-   #undef INT16_MIN
-   #undef INT16_MAX
    #undef UINT16_MIN
    #undef UINT16_MAX
-
-   #undef INT32_MIN
-   #undef INT32_MAX
    #undef UINT32_MIN
    #undef UINT32_MAX
-
-   #undef INT64_MIN
-   #undef INT64_MAX
    #undef UINT64_MIN
    #undef UINT64_MAX
+   #undef INT8_MIN
+   #undef INT8_MAX
+   #undef INT16_MIN
+   #undef INT16_MAX
+   #undef INT32_MIN
+   #undef INT32_MAX
+   #undef INT64_MIN
+   #undef INT64_MAX
+
 #endif
 
 namespace lzham
