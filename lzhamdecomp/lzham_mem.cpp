@@ -1,5 +1,5 @@
 // File: lzham_mem.cpp
-// See Copyright Notice and license at the end of include/lzham.h
+// LZHAM is in the Public Domain. Please see the Public Domain declaration at the end of include/lzham.h
 #include "lzham_core.h"
 
 #ifdef __APPLE__

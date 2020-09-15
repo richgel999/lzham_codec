@@ -1,5 +1,5 @@
 // File: timer.cpp
-// See Copyright Notice and license at the end of include/lzham.h
+// LZHAM is in the Public Domain. Please see the Public Domain declaration at the end of include/lzham.h
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
