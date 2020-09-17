@@ -165,7 +165,7 @@
       #error TODO: Unknown Apple target
    #endif
 
-#elif defined(__linux__) && (defined(__i386__) || defined(__x86_64__)) && !defined(LZHAM_ANSI_CPLUSPLUS) 
+#elif defined(__linux__) && !defined(ANDROID) && (defined(__i386__) || defined(__x86_64__)) && !defined(LZHAM_ANSI_CPLUSPLUS) 
    // --- Generic GCC/clang path for x86/x64, clang or GCC, Linux, OSX, FreeBSD or NetBSD, pthreads for threading, GCC built-ins for atomic ops.
    #define LZHAM_PLATFORM_PC 1
 
@@ -199,6 +199,41 @@
       #define LZHAM_FORCE_INLINE inline __attribute__((__always_inline__,__gnu_inline__))
    #endif
 
+   #define LZHAM_NOTE_UNUSED(x) (void)x
+#elif defined(ANDROID) && !defined(LZHAM_ANSI_CPLUSPLUS)
+   // Generic GCC path for Android, GCC built-ins for atomic ops. Basically identical to iOS path.
+   // Pthreads disabled because spin lock is missing..?
+   #define LZHAM_PLATFORM_PC 0
+   
+   #if defined(_WIN64) || defined(__MINGW64__) || defined(_LP64) || defined(__LP64__)
+      #define LZHAM_PLATFORM_PC_X64 0
+      #define LZHAM_64BIT_POINTERS 1
+      #define LZHAM_CPU_HAS_64BIT_REGISTERS 1
+   #else
+      #define LZHAM_PLATFORM_PC_X86 0
+      #define LZHAM_64BIT_POINTERS 0
+      #define LZHAM_CPU_HAS_64BIT_REGISTERS 0
+   #endif
+   
+   #define LZHAM_USE_UNALIGNED_INT_LOADS 0
+   
+   #if __BIG_ENDIAN__
+      #define LZHAM_BIG_ENDIAN_CPU 1
+   #else
+      #define LZHAM_LITTLE_ENDIAN_CPU 1
+   #endif
+   
+   #define LZHAM_USE_PTHREADS_API 0
+   #define LZHAM_USE_GCC_ATOMIC_BUILTINS 1
+   
+   #define LZHAM_RESTRICT
+   
+   #if defined(__clang__)
+      #define LZHAM_FORCE_INLINE inline
+   #else
+      #define LZHAM_FORCE_INLINE inline __attribute__((__always_inline__,__gnu_inline__))
+   #endif
+   
    #define LZHAM_NOTE_UNUSED(x) (void)x
 #else
    #warning Building as vanilla ANSI-C/C++, multi-threaded compression is disabled! Please configure lzhamdecomp/lzham_core.h.
