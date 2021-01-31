@@ -61,8 +61,8 @@ void lzham_debug_break(void)
 {
 #if LZHAM_USE_WIN32_API
    DebugBreak();
-#elif (TARGET_OS_MAC == 1) && (TARGET_IPHONE_SIMULATOR == 0) && (TARGET_OS_IPHONE == 0)
-   __asm {int 3}
+#elif (TARGET_OS_MAC == 1) && (TARGET_IPHONE_SIMULATOR == 0) && (TARGET_OS_IPHONE == 0) && !(defined(_M_ARM64) || defined(__aarch64__))
+	   __asm {int 3}
 #else
    assert(0);
 #endif

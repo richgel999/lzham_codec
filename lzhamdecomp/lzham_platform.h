@@ -21,7 +21,7 @@ void lzham_fail(const char* pExp, const char* pFile, unsigned line);
    #define LZHAM_BUILTIN_EXPECT(c, v) c
 #endif
 
-#if defined(__GNUC__) && LZHAM_PLATFORM_PC
+#if defined(__GNUC__) && LZHAM_PLATFORM_PC && !(defined(_M_ARM64) || defined(__aarch64__))
 extern __inline__ __attribute__((__always_inline__,__gnu_inline__)) void lzham_yield_processor()
 {
    __asm__ __volatile__("pause");
