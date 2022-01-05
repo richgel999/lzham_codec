@@ -17,12 +17,83 @@ using namespace lzham;
 
 #define LZHAM_MEM_STATS 0
 
-#ifndef LZHAM_USE_WIN32_API
-   #ifndef __APPLE__
-      #define _msize malloc_usable_size
-   #else
-      #define _msize malloc_size
-   #endif
+#if !defined( ANDROID ) && !defined(_AIX43) && !defined(LZHAM_STANDARD_ALLOCATION)
+
+    #define allocate( size )		malloc( size )
+    #define reallocate( p, size )	realloc( p, size )
+    #define deallocate( p )			free( p )
+    #define getAllocationSize( p )	_msize( p )
+    
+    #ifndef LZHAM_USE_WIN32_API
+       #if !defined(__APPLE__) && !defined(ANDROID)
+          #define getAllocationSize( p ) malloc_usable_size( p )
+       #else
+          #define getAllocationSize( p ) malloc_size( p )
+       #endif
+    #else
+       #define getAllocationSize( p ) _msize( p )
+    #endif
+
+#else
+
+// Android does not have an API any more for discovering true allocation size, so we need to patch in that data ourselves.
+static void* allocate( size_t size )
+{
+	uint8* q = static_cast<uint8*>(malloc(LZHAM_MIN_ALLOC_ALIGNMENT + size));
+	if (!q)
+		return NULL;
+   
+	uint8* p = q + LZHAM_MIN_ALLOC_ALIGNMENT;
+	reinterpret_cast<size_t*>(p)[-1] = size;
+	reinterpret_cast<size_t*>(p)[-2] = ~size;
+   
+	return p;
+}
+
+static void deallocate( void* p )
+{
+	if( p != NULL )
+	{
+		const size_t num = reinterpret_cast<size_t*>(p)[-1];
+		const size_t num_check = reinterpret_cast<size_t*>(p)[-2];
+		LZHAM_ASSERT(num && (num == ~num_check));
+		if (num == ~num_check)
+		{
+			free(reinterpret_cast<uint8*>(p) - LZHAM_MIN_ALLOC_ALIGNMENT);
+		}
+	}
+}
+
+static size_t getAllocationSize( void* p )
+{
+	const size_t num = reinterpret_cast<size_t*>(p)[-1];
+	const size_t num_check = reinterpret_cast<size_t*>(p)[-2];
+	LZHAM_ASSERT(num && (num == ~num_check));
+	if (num == ~num_check)
+		return num;
+
+	return 0;
+}
+
+static void* reallocate( void* p, size_t size )
+{
+	if( size == 0 )
+	{
+		deallocate( p );
+		return NULL;
+	}
+	
+	uint8* q = static_cast<uint8*>(realloc( p, LZHAM_MIN_ALLOC_ALIGNMENT + size ));
+	if (!q)
+		return NULL;
+   
+	uint8* newp = q + LZHAM_MIN_ALLOC_ALIGNMENT;
+	reinterpret_cast<size_t*>(newp)[-1] = size;
+	reinterpret_cast<size_t*>(newp)[-2] = ~size;
+	
+	return newp;
+}
+
 #endif
 
 namespace lzham
@@ -86,15 +157,15 @@ namespace lzham
 
       if (!p)
       {
-         p_new = malloc(size);
+         p_new = allocate(size);
          LZHAM_ASSERT( (reinterpret_cast<ptr_bits_t>(p_new) & (LZHAM_MIN_ALLOC_ALIGNMENT - 1)) == 0 );
 
          if (pActual_size)
-            *pActual_size = p_new ? _msize(p_new) : 0;
+            *pActual_size = p_new ? getAllocationSize(p_new) : 0;
       }
       else if (!size)
       {
-         free(p);
+         deallocate(p);
          p_new = NULL;
 
          if (pActual_size)
@@ -117,7 +188,7 @@ namespace lzham
          }
          else if (movable)
          {
-            p_new = realloc(p, size);
+            p_new = reallocate(p, size);
 
             if (p_new)
             {
@@ -127,7 +198,7 @@ namespace lzham
          }
 
          if (pActual_size)
-            *pActual_size = _msize(p_final_block);
+            *pActual_size = getAllocationSize(p_final_block);
       }
 
       return p_new;
@@ -136,7 +207,7 @@ namespace lzham
    static size_t lzham_default_msize(void* p, void* pUser_data)
    {
       LZHAM_NOTE_UNUSED(pUser_data);
-      return p ? _msize(p) : 0;
+      return p ? getAllocationSize(p) : 0;
    }
 
    static lzham_realloc_func        g_pRealloc = lzham_default_realloc;

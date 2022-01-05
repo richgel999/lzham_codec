@@ -2,6 +2,10 @@
 // LZHAM is in the Public Domain. Please see the Public Domain declaration at the end of include/lzham.h
 #pragma once
 
+#if (defined(_AIX43))    
+#include <stdint.h>
+#endif
+
 namespace lzham
 {
    typedef unsigned char      uint8;
@@ -16,6 +20,9 @@ namespace lzham
    #ifdef _MSC_VER
       typedef unsigned __int64      uint64;
       typedef signed __int64        int64;
+   #elif (defined(_AIX43))
+      typedef uint64_t              uint64;
+      typedef int64_t               int64;
    #else
       typedef unsigned long long    uint64;
       typedef long long             int64;
