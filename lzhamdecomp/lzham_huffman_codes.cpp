@@ -224,7 +224,7 @@ namespace lzham
             
             sym_freq& sf = state.syms0[num_used_syms];
             sf.m_left = (uint16)i;
-            sf.m_right = UINT16_MAX;
+            sf.m_right = LZHAM_UINT16_MAX;
             sf.m_freq = freq;
             num_used_syms++;
          }            
