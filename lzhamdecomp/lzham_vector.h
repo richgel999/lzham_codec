@@ -99,7 +99,7 @@ namespace lzham
          }
 
          if (LZHAM_IS_BITWISE_COPYABLE(T))
-            memcpy(m_p, other.m_p, other.m_size * sizeof(T));
+            memcpy((void *)m_p, other.m_p, other.m_size * sizeof(T));
          else
          {
             T* pDst = m_p;

@@ -979,7 +979,7 @@ namespace lzham
          pNodes[i].clear();
       }
 #else
-      memset( &pNodes[1], 0xFF, cMaxParseGraphNodes * sizeof(node_state));
+      memset((void *)&pNodes[1], 0xFF, cMaxParseGraphNodes * sizeof(node_state));
 #endif
 
       state &approx_state = parse_state.m_initial_state;

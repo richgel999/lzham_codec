@@ -1265,8 +1265,8 @@ namespace lzham
       {
          uint32 t = pTables->m_lookup[m_bit_buf >> (cBitBufSize - pTables->m_table_bits)];
 
-         LZHAM_ASSERT(t != UINT32_MAX);
-         sym = t & UINT16_MAX;
+         LZHAM_ASSERT(t != LZHAM_UINT32_MAX);
+         sym = t & LZHAM_UINT16_MAX;
          len = t >> 16;
 
          LZHAM_ASSERT(model.m_code_sizes[sym] == len);
