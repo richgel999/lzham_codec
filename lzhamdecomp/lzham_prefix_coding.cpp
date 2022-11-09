@@ -149,7 +149,7 @@ namespace lzham
          {
             uint c = pCodesizes[i];
             
-            LZHAM_ASSERT(!c || (next_code[c] <= UINT16_MAX));
+            LZHAM_ASSERT(!c || (next_code[c] <= LZHAM_UINT16_MAX));
             
             pCodes[i] = static_cast<uint16>(next_code[c]++);
             
@@ -296,7 +296,7 @@ namespace lzham
                      
                      LZHAM_ASSERT(t < (1U << table_bits));
                      
-                     LZHAM_ASSERT(pTables->m_lookup[t] == UINT32_MAX);
+                     LZHAM_ASSERT(pTables->m_lookup[t] == LZHAM_UINT32_MAX);
                      
                      pTables->m_lookup[t] = sym_index | (codesize << 16U);
                   }

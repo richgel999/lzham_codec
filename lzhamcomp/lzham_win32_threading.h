@@ -43,9 +43,9 @@ namespace lzham
          }
       }
 
-      bool wait(uint32 milliseconds = UINT32_MAX)
+      bool wait(uint32 milliseconds = LZHAM_UINT32_MAX)
       {
-         LZHAM_ASSUME(INFINITE == UINT32_MAX);
+         LZHAM_ASSUME(INFINITE == LZHAM_UINT32_MAX);
 
          DWORD result = WaitForSingleObject(m_handle, milliseconds);
 
