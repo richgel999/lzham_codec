@@ -3,6 +3,8 @@
 #include "lzham_core.h"
 #include "lzham_huffman_codes.h"
 
+#include <cstdint>
+
 namespace lzham
 {
    struct sym_freq
